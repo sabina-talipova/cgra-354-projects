@@ -83,7 +83,7 @@ void Application::renderGUI() {
 	ImGui::InputText("", filename, 512);
 	ImGui::SameLine();
 	if (ImGui::Button("Load")) {
-		obj_file.loadOBJ(CGRA_SRCDIR + std::string("//res//assets//") + filename);
+		obj_file.loadOBJ(filename);
 		obj_file.build();
 	}
 
