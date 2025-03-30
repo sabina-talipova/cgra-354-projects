@@ -28,8 +28,8 @@ Application::Application(GLFWwindow *window) : m_window(window) {
 	
 	// build the shader for the model
 	shader_builder color_sb;
-	color_sb.set_shader(GL_VERTEX_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_vert.glsl"));
-	color_sb.set_shader(GL_FRAGMENT_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_frag.glsl"));
+	color_sb.set_shader(GL_VERTEX_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_vert_2.glsl"));
+	color_sb.set_shader(GL_FRAGMENT_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_frag_2.glsl"));
 	GLuint color_shader = color_sb.build();
 
 	// build the mesh for the model
@@ -92,7 +92,20 @@ void Application::renderGUI() {
 
 	ImGui::Separator();
 
-	ImGui::SliderFloat3("Model Color", value_ptr(m_model.color), 0, 1, "%.2f");
+	// ambient / diffuse colour, specular colour, and shininess
+	ImGui::Separator();
+
+	ImGui::SliderFloat3("Diffuse Color", value_ptr(m_model.color), 0, 1, "%.2f");
+
+	ImGui::SliderFloat3("Ambient Color", value_ptr(m_model.ambient_color), 0, 1, "%.2f");
+
+	ImGui::SliderFloat3("Specular Color", value_ptr(m_model.specular_color), 0, 1, "%.2f");
+
+	ImGui::SliderFloat("Specular Strength", &m_model.specular_strength, 0.0, 1.0, "%.4f");
+
+	ImGui::SliderFloat("Shininess", &m_model.shininess, 1.0, 128.0, "%.1f");
+
+	ImGui::SliderFloat3("Light Position", value_ptr(m_model.light_pos), -pi<float>() * 2, pi<float>() * 2, "%.2f");
 
 	// extra drawing parameters
 	ImGui::Checkbox("Show axis", &m_show_axis);
@@ -112,10 +125,13 @@ void Application::cursorPosCallback(double xpos, double ypos) {
 		vec2 w_size = m_windowsize / 2.0f;
 
 		m_pitch += float(acos(glm::clamp((m_mouse_pos.y - w_size.y) / w_size.y, -1.0f, 1.0f))
-			- acos(glm::clamp((float(ypos) - w_size.y) / w_size.y, -1.0f, 1.0f)));
+		- acos(glm::clamp((float(ypos) - w_size.y) / w_size.y, -1.0f, 1.0f)));
+
 		m_pitch = float(glm::clamp(m_pitch, -pi<float>() / 2, pi<float>() / 2));
+
 		m_yaw += float(acos(glm::clamp((m_mouse_pos.x - w_size.x) / w_size.x, -1.0f, 1.0f))
-			- acos(glm::clamp((float(xpos) - w_size.x) / w_size.x, -1.0f, 1.0f)));
+		- acos(glm::clamp((float(xpos) - w_size.x) / w_size.x, -1.0f, 1.0f)));
+
 		if (m_yaw > pi<float>()) m_yaw -= float(2 * pi<float>());
 		else if (m_yaw < -pi<float>()) m_yaw += float(2 * pi<float>());
 	}
@@ -127,9 +143,7 @@ void Application::cursorPosCallback(double xpos, double ypos) {
 void Application::mouseButtonCallback(int button, int action, int mods) {
 	(void)mods; // currently un-used
 
-	// capture is left-mouse down
-	if (button == GLFW_MOUSE_BUTTON_LEFT)
-		m_mouse_click = (action == GLFW_PRESS); // only other option is GLFW_RELEASE
+	if (button == GLFW_MOUSE_BUTTON_LEFT) m_mouse_click = (action == GLFW_PRESS);
 }
 
 
