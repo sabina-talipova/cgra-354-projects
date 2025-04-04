@@ -22,6 +22,9 @@ I created at least 100 objects, each with the same model but positioned, rotated
 
 To achieve this, I used instancing, which allowed me to efficiently draw all the objects with a single draw call. For each object, I applied different transformations, such as translation, rotation, and scaling, stored in an array of model matrices. This method ensured that each object was rendered with its own unique properties while still maintaining the shared mesh and shader.<br/>
 
+> [!NOTE]
+> Click button "Show teapots" to display many teapots from one object.
+
 <br/>
 <img src="preview/Part_2.png" alt="Completion" width="500" height="auto">
 <br/>
