@@ -18,7 +18,6 @@ in VertexData {
 	vec3 position;
 	vec3 normal;
 	vec2 textureCoord;
-	vec3 fragColor;
 } f_in;
 
 // framebuffer output
@@ -38,7 +37,7 @@ void main() {
 
 	// Diffuse component
 	float diff = max(dot(norm, lightDir), 0.0);
-	vec3 diffuse = diff * f_in.fragColor;
+	vec3 diffuse = diff * uColor;
 
 	// Specular component
 	vec3 viewDir = normalize(viewPos - f_in.position);

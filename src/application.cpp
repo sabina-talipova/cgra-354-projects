@@ -28,8 +28,8 @@ Application::Application(GLFWwindow *window) : m_window(window) {
 	
 	// build the shader for the model
 	shader_builder color_sb;
-	color_sb.set_shader(GL_VERTEX_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_vert_2.glsl"));
-	color_sb.set_shader(GL_FRAGMENT_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_frag_2.glsl"));
+	color_sb.set_shader(GL_VERTEX_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_vert_3.glsl"));
+	color_sb.set_shader(GL_FRAGMENT_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_frag_3.glsl"));
 	GLuint color_shader = color_sb.build();
 
 	// build the mesh for the model
@@ -81,7 +81,7 @@ void Application::renderGUI() {
 
 	// setup window
 	ImGui::SetNextWindowPos(ImVec2(5, 5), ImGuiSetCond_Once);
-	ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiSetCond_Once);
+	ImGui::SetNextWindowSize(ImVec2(400, 500), ImGuiSetCond_Once);
 	ImGui::Begin("Camera", 0);
 
 	// display current camera parameters
@@ -106,6 +106,22 @@ void Application::renderGUI() {
 	ImGui::SliderFloat("Shininess", &m_model.shininess, 1.0, 128.0, "%.1f");
 
 	ImGui::SliderFloat3("Light Position", value_ptr(m_model.light_pos), -pi<float>() * 2, pi<float>() * 2, "%.2f");
+
+	if (ImGui::Button("Show teapots")) {
+		// build the shader for the model
+		shader_builder color_sb;
+		color_sb.set_shader(GL_VERTEX_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_vert_2.glsl"));
+		color_sb.set_shader(GL_FRAGMENT_SHADER, CGRA_SRCDIR + std::string("//res//shaders//default_frag_2.glsl"));
+		GLuint color_shader = color_sb.build();
+
+		// build the mesh for the model
+		mesh_builder teapot_mb = load_wavefront_data(CGRA_SRCDIR + std::string("//res//assets//teapot.obj"));
+		gl_mesh teapot_mesh = teapot_mb.multibuild();
+
+		// put together an object
+		m_model.shader = color_shader;
+		m_model.mesh = teapot_mesh;
+	}
 
 	// extra drawing parameters
 	ImGui::Checkbox("Show axis", &m_show_axis);

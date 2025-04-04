@@ -74,6 +74,7 @@ namespace cgra {
 		}
 
 		gl_mesh build() const;
+		gl_mesh multibuild() const;
 
 		void print() const {
 			std::cout << "pos" << std::endl;

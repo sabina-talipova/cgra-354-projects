@@ -55,4 +55,33 @@ struct basic_model {
 		// draw the mesh
 		mesh.draw(); 
 	}
+
+	//void drawModels() {
+	//	const int NUM_TEAPOTS = 10;
+	//	glm::mat4 instanceMatrices[NUM_TEAPOTS];
+
+	//	for (int i = 0; i < NUM_TEAPOTS; i++) {
+	//		glm::mat4 model = glm::mat4(1.0f);
+
+	//		// Random position (-10 to 10)
+	//		model = glm::translate(model, glm::vec3(rand() % 20 - 10, 0, rand() % 20 - 10));
+
+	//		// Random rotation
+	//		float angle = glm::radians((float)(rand() % 360));
+	//		model = glm::rotate(model, angle, glm::vec3(0.0, 1.0, 0.0));
+
+	//		// Random scale (0.5 to 1.5)
+	//		float scale = 0.5f + (rand() % 100) / 100.0f;
+	//		model = glm::scale(model, glm::vec3(scale));
+
+	//		instanceMatrices[i] = model;
+	//	}
+
+	//	// Create an instance VBO
+	//	unsigned int instanceVBO;
+	//	glGenBuffers(1, &instanceVBO);
+	//	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+	//	glBufferData(GL_ARRAY_BUFFER, sizeof(instanceMatrices), instanceMatrices, GL_STATIC_DRAW);
+
+	//}
 };
