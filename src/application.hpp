@@ -39,6 +39,7 @@ private:
 	bool m_pause = false;
 	std::chrono::time_point<std::chrono::steady_clock> m_current_time;
 
+
 public:
 	// setup
 	Application(GLFWwindow *);

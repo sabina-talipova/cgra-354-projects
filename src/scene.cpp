@@ -73,22 +73,48 @@ void Scene::loadCore() {
 	// ...
 
 	// this creates a boid with a random location in [-1, 1]^3 and random velocity (magnitude = 1)
+	//m_boids.clear();
+	//m_boids.push_back(Boid(linearRand(vec3(-1), vec3(1)), sphericalRand(1.0)));
+
 	m_boids.clear();
-	m_boids.push_back(Boid(linearRand(vec3(-1), vec3(1)), sphericalRand(1.0)));
+
+	int numBoids = linearRand(100, 300);
+
+	for (int i = 0; i < numBoids; ++i) {
+		glm::vec3 pos = linearRand(-m_bound_hsize, m_bound_hsize);
+
+		glm::vec3 vel = glm::normalize(sphericalRand(1.0f));
+
+		m_boids.emplace_back(pos, vel);
+	}
 
 }
 
 void Scene::loadCompletion() {
-	//-------------------------------------------------------------
-	// [Assignment 3] (Completion) :
-	// Initialize the scene with 2 different flocks of boids,
-	// 75-150 in each flock, in random locations inside the current
-	// bound size. Additionally include at least one Predator.
-	//-------------------------------------------------------------
+	m_boids.clear();
 
-	// YOUR CODE GOES HERE
-	// ...
+	int flock1Count = linearRand(75, 150);
+	int flock2Count = linearRand(75, 150);
 
+	glm::vec3 halfBound = m_bound_hsize * 0.5f;
+
+	for (int i = 0; i < flock1Count; ++i) {
+		glm::vec3 pos = linearRand(glm::vec3(-m_bound_hsize.x, -m_bound_hsize.y, -m_bound_hsize.z),
+			glm::vec3(0.0f, m_bound_hsize.y, m_bound_hsize.z));
+		glm::vec3 vel = glm::normalize(sphericalRand(1.0f));
+		m_boids.emplace_back(pos, vel, 0, false);
+	}
+
+	for (int i = 0; i < flock2Count; ++i) {
+		glm::vec3 pos = linearRand(glm::vec3(0.0f, -m_bound_hsize.y, -m_bound_hsize.z),
+			glm::vec3(m_bound_hsize.x, m_bound_hsize.y, m_bound_hsize.z));
+		glm::vec3 vel = glm::normalize(sphericalRand(1.0f));
+		m_boids.emplace_back(pos, vel, 1, false);
+	}
+
+	glm::vec3 pos = linearRand(-m_bound_hsize, m_bound_hsize);
+	glm::vec3 vel = glm::normalize(sphericalRand(1.0f)) * 1.5f;
+	m_boids.emplace_back(pos, vel, -1, true);
 }
 
 
@@ -102,6 +128,23 @@ void Scene::loadChallenge() {
 
 	// YOUR CODE GOES HERE
 	// ...
+
+	m_boids.clear();
+	m_obstacles.clear();
+
+	int numBoids = 200;
+	glm::vec3 minBound = -m_bound_hsize;
+	glm::vec3 maxBound = m_bound_hsize;
+
+	for (int i = 0; i < numBoids; ++i) {
+		glm::vec3 pos = glm::linearRand(minBound, maxBound);
+		glm::vec3 vel = glm::sphericalRand(1.0f);
+		m_boids.emplace_back(pos, vel);
+	}
+
+	addObstacle(glm::vec3(-15.0f, 0.0f, 0.0f), 8.0f);
+	addObstacle(glm::vec3(10.0f, 5.0f, -10.0f), 10.0f);
+	addObstacle(glm::vec3(0.0f, -12.0f, 12.0f), 12.0f);
 
 }
 
@@ -197,6 +240,16 @@ void Scene::draw(const mat4 &proj, const mat4 &view) {
 		m_simple_boid_mesh.draw();
 
 	}
+	for (const Obstacle& obs : m_obstacles) {
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), obs.position);
+		model = glm::scale(model, glm::vec3(obs.radius));
+		mat4 modelview = view * model;
+
+		glUniformMatrix4fv(glGetUniformLocation(m_color_shader, "uModelViewProjMatrix"), 1, false, glm::value_ptr(modelview));
+		glUniform3fv(glGetUniformLocation(m_color_shader, "uColor"), 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.2f)));
+
+		m_sphere_mesh.draw();
+	}
 }
 
 
@@ -238,5 +291,13 @@ void Scene::renderGUI() {
 
 	// YOUR CODE GOES HERE
 	// ...
+
+	ImGui::SliderFloat("Min Speed", &m_minSpeed, 0.1f, 20.0f);
+	ImGui::SliderFloat("Max Speed", &m_maxSpeed, 0.1f, 30.0f);
+	ImGui::SliderFloat("Local Radius", &m_localRadius, 1.0f, 20.0f);
+
+	ImGui::SliderFloat("Avoidance", &m_avoidanceWeight, 0.0f, 5.0f);
+	ImGui::SliderFloat("Alignment", &m_alignmentWeight, 0.0f, 5.0f);
+	ImGui::SliderFloat("Cohesion", &m_cohesionWeight, 0.0f, 5.0f);
 
 }

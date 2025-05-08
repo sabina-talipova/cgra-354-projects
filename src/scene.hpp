@@ -15,6 +15,12 @@
 // boid class (forward declaration)
 class Boid;
 
+struct Obstacle {
+	glm::vec3 position;
+	float radius;
+};
+
+
 class Scene {
 private:
 	// opengl draw data
@@ -46,6 +52,16 @@ private:
 	// YOUR CODE GOES HERE
 	// ...
 
+	float m_minSpeed = 2.0f;
+	float m_maxSpeed = 10.0f;
+	float m_localRadius = 5.0f;
+
+	float m_avoidanceWeight = 1.5f;
+	float m_alignmentWeight = 1.0f;
+	float m_cohesionWeight = 1.0f;
+
+	std::vector<Obstacle> m_obstacles;
+
 public:
 
 	Scene();
@@ -73,4 +89,25 @@ public:
 	// YOUR CODE GOES HERE
 	// ...
 
+	float minSpeed() const { return m_minSpeed; }
+	float maxSpeed() const { return m_maxSpeed; }
+	float localRadius() const { return m_localRadius; }
+
+	float avoidanceWeight() const { return m_avoidanceWeight; }
+	float alignmentWeight() const { return m_alignmentWeight; }
+	float cohesionWeight() const { return m_cohesionWeight; }
+
+	void setMinSpeed(float speed) { m_minSpeed = speed; }
+	void setMaxSpeed(float speed) { m_maxSpeed = speed; }
+	void setLocalRadius(float radius) { m_localRadius = radius; }
+
+	void setAvoidanceWeight(float w) { m_avoidanceWeight = w; }
+	void setAlignmentWeight(float w) { m_alignmentWeight = w; }
+	void setCohesionWeight(float w) { m_cohesionWeight = w; }
+
+	void addObstacle(const glm::vec3& pos, float radius) {
+		m_obstacles.push_back({ pos, radius });
+	}
+
+	const std::vector<Obstacle>& obstacles() const { return m_obstacles; }
 };
