@@ -61,6 +61,7 @@ private:
 	float m_cohesionWeight = 1.0f;
 
 	std::vector<Obstacle> m_obstacles;
+	bool m_show_obstacle = false;
 
 public:
 

@@ -112,9 +112,12 @@ void Scene::loadCompletion() {
 		m_boids.emplace_back(pos, vel, 1, false);
 	}
 
-	glm::vec3 pos = linearRand(-m_bound_hsize, m_bound_hsize);
-	glm::vec3 vel = glm::normalize(sphericalRand(1.0f)) * 1.5f;
-	m_boids.emplace_back(pos, vel, -1, true);
+	for (int i = 0; i < 3; ++i) {
+		glm::vec3 pos = linearRand(-m_bound_hsize, m_bound_hsize);
+		glm::vec3 vel = glm::normalize(sphericalRand(1.0f)) * 1.5f;
+		m_boids.emplace_back(pos, vel, -1, true);
+	}
+
 }
 
 
@@ -142,9 +145,9 @@ void Scene::loadChallenge() {
 		m_boids.emplace_back(pos, vel);
 	}
 
-	addObstacle(glm::vec3(-15.0f, 0.0f, 0.0f), 8.0f);
+	addObstacle(glm::vec3(minBound), 8.0f);
 	addObstacle(glm::vec3(10.0f, 5.0f, -10.0f), 10.0f);
-	addObstacle(glm::vec3(0.0f, -12.0f, 12.0f), 12.0f);
+	addObstacle(glm::vec3(maxBound), 12.0f);
 
 }
 
@@ -245,10 +248,13 @@ void Scene::draw(const mat4 &proj, const mat4 &view) {
 		model = glm::scale(model, glm::vec3(obs.radius));
 		mat4 modelview = view * model;
 
-		glUniformMatrix4fv(glGetUniformLocation(m_color_shader, "uModelViewProjMatrix"), 1, false, glm::value_ptr(modelview));
+		glUniformMatrix4fv(glGetUniformLocation(m_color_shader, "uProjectionMatrix"), 1, false, value_ptr(proj));
+		glUniformMatrix4fv(glGetUniformLocation(m_color_shader, "uModelViewMatrix"), 1, false, glm::value_ptr(modelview));
 		glUniform3fv(glGetUniformLocation(m_color_shader, "uColor"), 1, glm::value_ptr(glm::vec3(1.0f, 0.5f, 0.2f)));
 
-		m_sphere_mesh.draw();
+		if (m_show_obstacle) {
+			m_sphere_mesh.draw();
+		}
 	}
 }
 
@@ -299,5 +305,7 @@ void Scene::renderGUI() {
 	ImGui::SliderFloat("Avoidance", &m_avoidanceWeight, 0.0f, 5.0f);
 	ImGui::SliderFloat("Alignment", &m_alignmentWeight, 0.0f, 5.0f);
 	ImGui::SliderFloat("Cohesion", &m_cohesionWeight, 0.0f, 5.0f);
+
+	ImGui::Checkbox("Draw Obstacles", &m_show_obstacle);
 
 }
