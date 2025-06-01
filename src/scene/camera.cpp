@@ -33,11 +33,17 @@ Ray Camera::generateRay(const vec2 &pixel) {
 	// then transforming it by the position and rotation to get
 	// it into worldspace.
 	//-------------------------------------------------------------
-	
-	Ray ray;
 
-	// YOUR CODE GOES HERE
-	// ...
-	
-	return ray;
+	glm::vec2 ndc = (pixel + 0.5f) / m_image_size;
+	float sx = 2.0f * ndc.x - 1.0f;
+	float sy = 1.0f - 2.0f * ndc.y;
+
+	float scale = tan(m_fovy * 0.5f);
+	float aspect = m_image_size.x / m_image_size.y;
+
+	glm::vec3 direction_cam = glm::normalize(glm::vec3(sx * aspect * scale, sy * scale, -1.0f));
+
+	glm::vec3 world_dir = glm::normalize(glm::vec3(m_rotation * glm::vec4(direction_cam, 0.0f)));
+
+	return Ray(m_position, world_dir);
 }

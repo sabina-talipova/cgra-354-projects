@@ -1,9 +1,11 @@
 
+#define GLM_ENABLE_EXPERIMENTAL
 // glm
 #include <glm/gtc/constants.hpp>
 
 // project
 #include "light.hpp"
+#include <glm/gtx/norm.hpp>
 
 using namespace glm;
 
@@ -17,10 +19,10 @@ bool DirectionalLight::occluded(Scene *scene, const vec3 &point) const {
 	// so any object in the way would cause an occlusion.
 	//-------------------------------------------------------------
 
-	// YOUR CODE GOES HERE
-	// ...
+	Ray shadowRay(point + 1e-4f * -m_direction, -m_direction);
+	RayIntersection hit = scene->intersect(shadowRay);
 
-	return false;
+	return hit.m_valid;
 }
 
 
@@ -43,11 +45,14 @@ bool PointLight::occluded(Scene *scene, const vec3 &point) const {
 	// an occulsion has to occur somewhere between the light and 
 	// the given point.
 	//-------------------------------------------------------------
+	glm::vec3 dirToLight = m_position - point;
+	float maxDist = glm::length(dirToLight);
+	glm::vec3 dir = glm::normalize(dirToLight);
 
-	// YOUR CODE GOES HERE
-	// ...
+	Ray shadowRay(point + 1e-4f * dir, dir);
+	RayIntersection hit = scene->intersect(shadowRay);
 
-	return false;
+	return hit.m_valid && hit.m_distance < maxDist;
 }
 
 
@@ -57,10 +62,7 @@ vec3 PointLight::incidentDirection(const vec3 &point) const {
 	// Return the direction of the incoming light (light to point)
 	//-------------------------------------------------------------
 
-	// YOUR CODE GOES HERE
-	// ...
-
-	return vec3(0);
+	return glm::normalize(m_position - point);
 }
 
 
@@ -73,9 +75,8 @@ vec3 PointLight::irradiance(const vec3 &point) const {
 	// it illuminates. Remember that the surface area increases
 	// as the sphere gets bigger, ie. the point is further away.
 	//-------------------------------------------------------------
+	float distance2 = glm::distance2(m_position, point);
+	if (distance2 == 0) return glm::vec3(0);
 
-	// YOUR CODE GOES HERE
-	// ...
-
-	return vec3(0);
+	return m_flux / (4.0f * glm::pi<float>() * distance2);
 }

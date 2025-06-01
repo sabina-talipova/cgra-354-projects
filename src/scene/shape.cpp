@@ -77,8 +77,27 @@ RayIntersection Sphere::intersect(const Ray &ray) {
 	// - m_uv_coord : texture coordinates (challenge only)
 	//-------------------------------------------------------------
 
-	// YOUR CODE GOES HERE
-	// ...
+
+	glm::vec3 oc = ray.origin - m_center;
+	float a = glm::dot(ray.direction, ray.direction);
+	float b = 2.0f * glm::dot(oc, ray.direction);
+	float c = glm::dot(oc, oc) - m_radius * m_radius;
+	float discriminant = b * b - 4 * a * c;
+
+	if (discriminant < 0.0f) return intersect;
+
+	float sqrt_disc = sqrt(discriminant);
+	float t1 = (-b - sqrt_disc) / (2.0f * a);
+	float t2 = (-b + sqrt_disc) / (2.0f * a);
+
+	float t = (t1 > 0) ? t1 : ((t2 > 0) ? t2 : -1.0f);
+	if (t < 0) return intersect;
+
+	intersect.m_valid = true;
+	intersect.m_distance = t;
+	intersect.m_position = ray.origin + t * ray.direction;
+	intersect.m_normal = glm::normalize(intersect.m_position - m_center);
+	intersect.m_shape = this;
 
 	return intersect;
 }

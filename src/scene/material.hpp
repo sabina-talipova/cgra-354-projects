@@ -39,3 +39,24 @@ public:
 	// return the shininess of this material
 	virtual float shininess() const { return m_shininess; }
 };
+
+class TexturedMaterial : public Material {
+private:
+	Texture m_texture;
+	bool m_has_texture;
+
+public:
+	TexturedMaterial(const glm::vec3& specular, float shininess, const Texture& texture)
+		: Material(glm::vec3(1.0f), specular, shininess),
+		m_texture(texture), m_has_texture(true) {}
+
+	bool hasTexture() const { return m_has_texture; }
+
+	glm::vec3 textureColor(const glm::vec2& uv) const {
+		return m_texture.sample(uv);
+	}
+
+	virtual glm::vec3 diffuse() const override {
+		return glm::vec3(1.0f);
+	}
+};
