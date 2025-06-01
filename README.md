@@ -61,7 +61,6 @@ This project implements a CPU-based ray tracer that supports rendering scenes co
 <br/>
 <img src="preview/img_core_05.png" alt="Core img 5" width="500" height="auto">
 <br/>
----
 
 ## Completion
 
@@ -92,9 +91,8 @@ This project implements a CPU-based ray tracer that supports rendering scenes co
 <img src="preview/img_comp_05.png" alt="Completion img 3" width="500" height="auto">
 <br/>
 
----
 
-## 🔬 Challenge (3 points)
+## Challenge
 
 ### 1. Textured Materials
 - Implemented `Texture` class for image-based texture sampling.
