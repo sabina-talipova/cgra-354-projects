@@ -36,7 +36,7 @@ Ray Camera::generateRay(const vec2 &pixel) {
 
 	glm::vec2 ndc = (pixel + 0.5f) / m_image_size;
 	float sx = 2.0f * ndc.x - 1.0f;
-	float sy = 1.0f - 2.0f * ndc.y;
+	float sy = 2.0f * ndc.y - 1.0f;
 
 	float scale = tan(m_fovy * 0.5f);
 	float aspect = m_image_size.x / m_image_size.y;
